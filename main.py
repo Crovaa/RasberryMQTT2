@@ -1,8 +1,21 @@
-import paho.mqtt.subscribe as subscribe
+import paho.mqtt.client as mqtt
 import time
 
-While True
-temp = subscribe.simple("paho/test/simple", hostname="205.236.77.22")
-print("%s %s" % (temp.topic, temp.payload))
-humidity = subscribe.simple("paho/test/simple", hostname="205.236.77.22")
-print("%s %s" % (humidity.topic, humidity.payload))
+broker_port = 1883
+
+def on_connect(client, userdata, flags, rc):
+    print("Connected With Result Code "+str(rc))
+
+    client.subscribe("TestingTopic", qos=1)
+
+def on_message(client, userdata, message):
+    print("Message Recieved: " + message.payload.decode())
+
+client = mqtt.Client()
+client.connect("10.4.1.212", broker_port)
+
+#client.publish(topic="TestingTopic", payload="TestingPayload", qos=1, retain=False)
+
+client.on_connect = on_connect
+client.on_message = on_message
+client.loop_forever()
